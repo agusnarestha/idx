@@ -8,7 +8,13 @@ import {
 import { ShareDataRow } from "@/types";
 import { getInvestorTypeName } from "@/lib/mappings";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 interface ShareTableProps {
   data: ShareDataRow[];
@@ -17,6 +23,9 @@ interface ShareTableProps {
   totalPages: number;
   onPageChange: (newPage: number) => void;
   isLoading: boolean;
+  sortBy: string;
+  sortOrder: "asc" | "desc";
+  onSortChange: (sortBy: string, sortOrder: "asc" | "desc") => void;
 }
 
 export function ShareTable({
@@ -26,11 +35,42 @@ export function ShareTable({
   totalPages,
   onPageChange,
   isLoading,
+  sortBy,
+  sortOrder,
+  onSortChange,
 }: ShareTableProps) {
+  const handleSort = (column: string) => {
+    if (sortBy === column) {
+      // Toggle sort order if clicking same column
+      onSortChange(column, sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // New column, default to ascending
+      onSortChange(column, "asc");
+    }
+  };
+
   const columns = [
     {
       accessorKey: "SHARE_CODE",
-      header: "Company",
+      header: () => (
+        <button
+          onClick={() => handleSort("SHARE_CODE")}
+          className="flex items-center gap-2 hover:text-blue transition"
+        >
+          Company
+          <span className="inline">
+            {sortBy === "SHARE_CODE" ? (
+              sortOrder === "asc" ? (
+                <ArrowUp size={16} />
+              ) : (
+                <ArrowDown size={16} />
+              )
+            ) : (
+              <ArrowUpDown size={16} />
+            )}
+          </span>
+        </button>
+      ),
       cell: (info: any) => (
         <div className="flex flex-col">
           <Link
@@ -91,7 +131,7 @@ export function ShareTable({
       header: "Total Shares",
       cell: (info: any) => (
         <div className="text-right font-medium text-foreground">
-          {info.getValue().toLocaleString()}
+          {Number(info.getValue()).toLocaleString()}
         </div>
       ),
     },
@@ -135,7 +175,7 @@ export function ShareTable({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-6 py-5 font-bold tracking-wider text-foreground"
+                    className="px-6 py-5 font-bold tracking-wider text-foreground cursor-pointer hover:bg-dim/50 transition"
                   >
                     {flexRender(
                       header.column.columnDef.header,

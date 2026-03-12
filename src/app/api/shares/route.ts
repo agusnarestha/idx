@@ -31,7 +31,8 @@ function loadCsvData(): ShareDataRow[] {
 
     let totalShares: any = row.TOTAL_HOLDING_SHARES;
     if (typeof totalShares === "string") {
-      totalShares = parseFloat(totalShares.replace(/,/g, "")) || 0;
+      totalShares =
+        parseFloat(totalShares.replace(/\./g, "").replace(/,/g, ".")) || 0;
     }
 
     return {
@@ -59,6 +60,10 @@ export async function GET(req: NextRequest) {
     const localForeign = searchParams.get("localForeign");
     const minPercentage = parseFloat(searchParams.get("minPercentage") || "0");
     const searchInvestor = searchParams.get("searchInvestor")?.toLowerCase();
+    const sortBy = searchParams.get("sortBy") || "SHARE_CODE";
+    const sortOrder = (searchParams.get("sortOrder") || "asc") as
+      | "asc"
+      | "desc";
 
     // Pagination
     const page = parseInt(searchParams.get("page") || "1", 10);
@@ -70,9 +75,8 @@ export async function GET(req: NextRequest) {
       if (date && String(row.DATE ?? "") !== date) match = false;
       if (shareCode) {
         const code = String(row.SHARE_CODE ?? "").toUpperCase();
-        const name = String(row.ISSUER_NAME ?? "").toUpperCase();
         const search = String(shareCode).toUpperCase();
-        if (!code.includes(search) && !name.includes(search)) match = false;
+        if (code !== search) match = false;
       }
       if (investorTypes && investorTypes.length > 0) {
         const type = String(row.INVESTOR_TYPE ?? "");
@@ -101,10 +105,22 @@ export async function GET(req: NextRequest) {
       return match;
     });
 
-    // Handle sort (by percentage desc) — guard against undefined/NaN
-    filteredData = filteredData.sort(
-      (a, b) => (Number(b.PERCENTAGE) || 0) - (Number(a.PERCENTAGE) || 0),
-    );
+    // Handle sort based on sortBy and sortOrder parameters
+    filteredData = filteredData.sort((a, b) => {
+      let aVal: any = a[sortBy as keyof ShareDataRow];
+      let bVal: any = b[sortBy as keyof ShareDataRow];
+
+      // Handle numeric values
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
+      }
+
+      // Handle string values
+      aVal = String(aVal || "").toLowerCase();
+      bVal = String(bVal || "").toLowerCase();
+      const comparison = aVal.localeCompare(bVal);
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
 
     // Apply pagination
     const total = filteredData.length;

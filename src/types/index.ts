@@ -20,6 +20,8 @@ export interface FilterParams {
   localForeign?: string;
   minPercentage?: number;
   searchInvestor?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }
 
 export interface PaginatedResponse<T> {

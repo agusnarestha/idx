@@ -6,9 +6,11 @@ interface UseSharesProps extends FilterParams {
   limit?: number;
 }
 
-const fetchShares = async (params: UseSharesProps): Promise<PaginatedResponse<ShareDataRow>> => {
+const fetchShares = async (
+  params: UseSharesProps,
+): Promise<PaginatedResponse<ShareDataRow>> => {
   const query = new URLSearchParams();
-  
+
   if (params.page) query.append("page", params.page.toString());
   if (params.limit) query.append("limit", params.limit.toString());
   if (params.date) query.append("date", params.date);
@@ -17,8 +19,12 @@ const fetchShares = async (params: UseSharesProps): Promise<PaginatedResponse<Sh
     query.append("investorTypes", params.investorTypes.join(","));
   }
   if (params.localForeign) query.append("localForeign", params.localForeign);
-  if (params.minPercentage) query.append("minPercentage", params.minPercentage.toString());
-  if (params.searchInvestor) query.append("searchInvestor", params.searchInvestor);
+  if (params.minPercentage)
+    query.append("minPercentage", params.minPercentage.toString());
+  if (params.searchInvestor)
+    query.append("searchInvestor", params.searchInvestor);
+  if (params.sortBy) query.append("sortBy", params.sortBy);
+  if (params.sortOrder) query.append("sortOrder", params.sortOrder);
 
   const url = `${typeof window !== "undefined" ? window.location.origin : ""}/api/shares?${query.toString()}`;
   const res = await fetch(url);

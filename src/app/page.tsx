@@ -11,9 +11,17 @@ import { Download, TrendingUp, Users } from "lucide-react";
 export default function Home() {
   const [filters, setFilters] = useState<FilterParams>({});
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<string>("SHARE_CODE");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const limit = 10;
 
-  const { data, isLoading, error } = useShares({ ...filters, page, limit });
+  const { data, isLoading, error } = useShares({
+    ...filters,
+    page,
+    limit,
+    sortBy,
+    sortOrder,
+  });
 
   const handleFilterChange = (newFilters: FilterParams) => {
     setFilters(newFilters);
@@ -153,6 +161,13 @@ export default function Home() {
             totalPages={data?.totalPages ?? 0}
             onPageChange={setPage}
             isLoading={isLoading}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSortChange={(newSortBy, newSortOrder) => {
+              setSortBy(newSortBy);
+              setSortOrder(newSortOrder);
+              setPage(1);
+            }}
           />
         </>
       )}
