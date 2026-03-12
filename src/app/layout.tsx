@@ -3,8 +3,41 @@ import "./globals.css";
 import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
-  title: "IDX Share Ownership Dashboard",
-  description: "Dashboard for viewing IDX share ownership",
+  title: "IDX Market Explorer - Indonesia Stock Exchange Share Ownership Data",
+  description:
+    "Explore Indonesian Stock Exchange (IDX) share ownership data. Analyze top shareholders, investor types, and ownership distribution across IDX companies.",
+  keywords: [
+    "IDX",
+    "Indonesia Stock Exchange",
+    "shares",
+    "shareholders",
+    "stock ownership",
+    "market data",
+  ],
+  authors: [{ name: "IDX Data Explorer" }],
+  openGraph: {
+    title: "IDX Market Explorer - Share Ownership Dashboard",
+    description:
+      "Comprehensive dashboard for Indonesia Stock Exchange share ownership analysis and investor information.",
+    type: "website",
+    locale: "en_US",
+    siteName: "IDX Market Explorer",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IDX Market Explorer",
+    description: "Analyze IDX share ownership and investor distribution",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    "max-image-preview": "large",
+    "max-snippet": -1,
+    "max-video-preview": -1,
+  },
+  alternates: {
+    canonical: "https://idx.agusnarestha.dev/",
+  },
 };
 
 export default function RootLayout({
@@ -20,14 +53,19 @@ export default function RootLayout({
             <div className="container mx-auto px-4 md:px-6 h-16 flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-blue flex items-center justify-center">
-                  <span className="text-white font-bold text-sm tracking-wider">IX</span>
+                  <span className="text-white font-bold text-sm tracking-wider">
+                    IX
+                  </span>
                 </div>
                 <h1 className="text-xl font-bold tracking-tight text-foreground">
                   Market Explorer
                 </h1>
               </div>
               <nav>
-                <a href="/" className="text-sm font-medium text-muted hover:text-foreground transition-colors">
+                <a
+                  href="/"
+                  className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+                >
                   Dashboard
                 </a>
               </nav>
