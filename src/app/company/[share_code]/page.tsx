@@ -15,12 +15,16 @@ export default function CompanyPage() {
   const decodedCode = decodeURIComponent(shareCode);
 
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<string>("SHARE_CODE");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const limit = 10;
 
   const { data, isLoading, error } = useShares({
     shareCode: decodedCode,
     page,
     limit,
+    sortBy,
+    sortOrder,
   });
 
   const companyName = data?.data?.[0]?.ISSUER_NAME ?? decodedCode;
@@ -77,6 +81,13 @@ export default function CompanyPage() {
                 totalPages={data?.totalPages ?? 0}
                 onPageChange={setPage}
                 isLoading={isLoading}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortChange={(newSortBy, newSortOrder) => {
+                  setSortBy(newSortBy);
+                  setSortOrder(newSortOrder);
+                  setPage(1);
+                }}
               />
             </section>
           </>
